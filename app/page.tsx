@@ -4,14 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
@@ -19,35 +12,10 @@ import { Search, Trash2, Edit } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Footer } from '@/components/footer';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { SalesOrder } from '@/lib/types/sales-order/interface';
 
-interface SalesOrder {
-  id: string;
-  soNumber: string;
-  customerName: string;
-  orderDate: string;
-  deliveryDate: string;
-  totalAmount: string;
-  status: string;
-}
 
 export default function Home() {
   const [salesOrders, setSalesOrders] = useState<SalesOrder[]>([]);
@@ -56,17 +24,13 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  useEffect(() => {
-    fetchSalesOrders();
-  }, []);
+  useEffect(() => { fetchSalesOrders(); }, []);
 
   useEffect(() => {
     let filtered = salesOrders;
 
     if (searchTerm) {
-      filtered = filtered.filter(order =>
-        order.soNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customerName.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(order => order.soNumber.toLowerCase().includes(searchTerm.toLowerCase()) || order.customerName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -88,7 +52,6 @@ export default function Home() {
         toast.error('Failed to fetch sales orders');
       }
     } catch (error) {
-      console.error('Error fetching sales orders:', error);
       toast.error('Failed to fetch sales orders');
     } finally {
       setLoading(false);
@@ -114,7 +77,7 @@ export default function Home() {
 
       if (response.ok) {
         toast.success(`Sales order ${soNumber} deleted successfully`);
-        fetchSalesOrders(); // Refresh the list
+        fetchSalesOrders(); 
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || 'Failed to delete sales order');

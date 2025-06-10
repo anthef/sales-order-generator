@@ -3,6 +3,8 @@ import { salesOrderItems, salesOrders } from '@/lib/db/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 
+
+//UPDATE ITEMS FOR ITEMS IN SALES ORDER
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string; itemId: string } }
@@ -29,7 +31,6 @@ export async function PUT(
       return NextResponse.json({ error: 'Item not found' }, { status: 404 });
     }
     
-    // Recalculate total amount for the sales order
     const allItems = await db
       .select()
       .from(salesOrderItems)
@@ -54,6 +55,8 @@ export async function PUT(
   }
 }
 
+
+//DELETE ITEM THAT ALREADY ORDERED
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string; itemId: string } }
@@ -70,7 +73,6 @@ export async function DELETE(
       return NextResponse.json({ error: 'Item not found' }, { status: 404 });
     }
     
-    // Recalculate total amount for the sales order
     const remainingItems = await db
       .select()
       .from(salesOrderItems)

@@ -3,6 +3,7 @@ import { salesOrders, salesOrderItems } from '@/lib/db/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 
+//GET EVERY ITEMS ON SALES ORDER 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -30,6 +31,8 @@ export async function GET(
   }
 }
 
+
+//UPDATE ITEMS ON SALES ORDER
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -38,7 +41,6 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
     
-    // Check if it's just a status update
     if (body.status && Object.keys(body).length === 1) {
       const [updatedOrder] = await db
         .update(salesOrders)
@@ -53,15 +55,12 @@ export async function PUT(
       return NextResponse.json({ success: true, salesOrder: updatedOrder });
     }
     
-    // Full update of sales order and items
     const { customerName, customerAddress, orderDate, deliveryDate, items, status } = body;
     
-    // Calculate new total amount
     const totalAmount = items.reduce((sum: number, item: any) => 
       sum + (parseFloat(item.quantity) * parseFloat(item.unitPrice)), 0
     );
     
-    // Update sales order
     const [updatedOrder] = await db
       .update(salesOrders)
       .set({
@@ -80,10 +79,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Sales order not found' }, { status: 404 });
     }
     
-    // Delete existing items
     await db.delete(salesOrderItems).where(eq(salesOrderItems.soId, id));
     
-    // Insert new items
     if (items && items.length > 0) {
       const orderItems = items.map((item: any) => ({
         soId: id,
@@ -103,6 +100,7 @@ export async function PUT(
   }
 }
 
+// DELETE ITEMS ON SALES ORDER
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -110,10 +108,7 @@ export async function DELETE(
   try {
     const { id } = await params;
     
-    // First delete all related items
     await db.delete(salesOrderItems).where(eq(salesOrderItems.soId, id));
-    
-    // Then delete the sales order
     const [deletedOrder] = await db
       .delete(salesOrders)
       .where(eq(salesOrders.id, id))
