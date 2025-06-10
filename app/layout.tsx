@@ -32,7 +32,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Sales Order Generator",
-  description: "A simple sales order management application",
+  description: "Anthony",
+  icons: {
+    icon : "icons8-sale-16 (1).png"
+  }
 };
 
 export default function RootLayout({

@@ -1,6 +1,8 @@
 import { pgTable, uuid, varchar, text, date, decimal, timestamp, integer } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
+
+//TABLE SALES ORDERS
 export const salesOrders = pgTable('sales_orders', {
   id: uuid('id').defaultRandom().primaryKey(),
   soNumber: varchar('so_number', { length: 50 }).notNull().unique(),
@@ -14,6 +16,7 @@ export const salesOrders = pgTable('sales_orders', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+//TABLE SALES ORDER ITEMS
 export const salesOrderItems = pgTable('sales_order_items', {
   id: uuid('id').defaultRandom().primaryKey(),
   soId: uuid('so_id').references(() => salesOrders.id).notNull(),
