@@ -6,7 +6,7 @@ CREATE TABLE "sales_order_items" (
 	"unit_price" numeric(12, 2) NOT NULL,
 	"line_total" numeric(12, 2) NOT NULL
 );
---> statement-breakpoint
+
 CREATE TABLE "sales_orders" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"so_number" varchar(50) NOT NULL,
@@ -20,5 +20,6 @@ CREATE TABLE "sales_orders" (
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "sales_orders_so_number_unique" UNIQUE("so_number")
 );
---> statement-breakpoint
+
+
 ALTER TABLE "sales_order_items" ADD CONSTRAINT "sales_order_items_so_id_sales_orders_id_fk" FOREIGN KEY ("so_id") REFERENCES "public"."sales_orders"("id") ON DELETE no action ON UPDATE no action;

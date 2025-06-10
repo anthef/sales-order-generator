@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Footer } from '@/components/footer';
 
 interface SalesOrder {
   id: string;
@@ -43,7 +44,6 @@ export default function Home() {
   useEffect(() => {
     let filtered = salesOrders;
 
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(order =>
         order.soNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -51,7 +51,6 @@ export default function Home() {
       );
     }
 
-    // Filter by status
     if (statusFilter !== 'all') {
       filtered = filtered.filter(order => order.status === statusFilter);
     }
@@ -101,7 +100,6 @@ export default function Home() {
         </Link>
       </div>
 
-      {/* Search and Filter Controls */}
       <div className="flex gap-4 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -183,6 +181,7 @@ export default function Home() {
           </Table>
         </CardContent>
       </Card>
+    <Footer />
     </div>
   );
 }

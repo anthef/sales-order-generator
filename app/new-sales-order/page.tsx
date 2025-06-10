@@ -67,7 +67,6 @@ export default function NewSalesOrder() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
     if (!formData.customerName.trim()) {
       toast.error('Customer name is required');
       return;

@@ -18,10 +18,6 @@ export function ModeToggle() {
         return null;
     }    
 
-    // const toggleTheme = (checked: boolean) => {
-    //     setTheme(checked ? 'dark' : 'light');
-    // };
-
     return (
         <div className="flex items-center space-x-2">
             <RiSunLine className={cn(
