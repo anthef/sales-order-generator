@@ -15,10 +15,29 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { Search } from 'lucide-react';
+import { Search, Trash2, Edit } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Footer } from '@/components/footer';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface SalesOrder {
   id: string;
@@ -84,6 +103,48 @@ export default function Home() {
       case 'Received': return 'info';
       case 'Cancelled': return 'destructive';
       default: return 'secondary';
+    }
+  };
+
+  const handleDeleteOrder = async (id: string, soNumber: string) => {
+    try {
+      const response = await fetch(`/api/sales-orders/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        toast.success(`Sales order ${soNumber} deleted successfully`);
+        fetchSalesOrders(); // Refresh the list
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to delete sales order');
+      }
+    } catch (error) {
+      console.error('Error deleting sales order:', error);
+      toast.error('Failed to delete sales order');
+    }
+  };
+
+  const handleStatusUpdate = async (id: string, newStatus: string, soNumber: string) => {
+    try {
+      const response = await fetch(`/api/sales-orders/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        toast.success(`Status updated for ${soNumber}`);
+        fetchSalesOrders(); // Refresh the list
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to update status');
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast.error('Failed to update status');
     }
   };
 
@@ -169,11 +230,61 @@ export default function Home() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Link href={`/sales-orders/${order.id}`}>
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
-                    </Link>
+                    <div className="flex gap-2">
+                      <Link href={`/sales-orders/${order.id}`}>
+                        <Button variant="outline" size="sm">
+                          View Details
+                        </Button>
+                      </Link>
+                      
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <Edit className="w-4 h-4 mr-1" />
+                            Status
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuLabel>Update Status</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          {['Draft', 'Pending', 'Approved', 'Received', 'Cancelled'].map((status) => (
+                            <DropdownMenuItem
+                              key={status}
+                              onClick={() => handleStatusUpdate(order.id, status, order.soNumber)}
+                              disabled={order.status === status}
+                            >
+                              {status}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="sm">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Sales Order</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete sales order {order.soNumber}? 
+                              This action cannot be undone and will also delete all associated items.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteOrder(order.id, order.soNumber)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </TableCell>
                 </TableRow>
               )))}
