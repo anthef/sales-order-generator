@@ -100,7 +100,7 @@ export default function Home() {
 
       if (response.ok) {
         toast.success(`Status updated for ${soNumber}`);
-        fetchSalesOrders(); // Refresh the list
+        fetchSalesOrders(); 
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || 'Failed to update status');
