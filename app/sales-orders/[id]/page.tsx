@@ -14,27 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-// import { SalesOrderItem, SalesOrderDetail } from '@/lib/types/sales-order-items';
-
-interface SalesOrderItem {
-  id: string;
-  description: string;
-  quantity: number;
-  unitPrice: string;
-  lineTotal: string;
-}
-
-interface SalesOrderDetail {
-  id: string;
-  soNumber: string;
-  customerName: string;
-  customerAddress: string;
-  orderDate: string;
-  deliveryDate: string;
-  totalAmount: string;
-  status: string;
-  items: SalesOrderItem[];
-}
+import type { SalesOrderItem, SalesOrderDetail } from '@/lib/types/sales-order-items/interface';
 
 export default function SalesOrderDetail() {
   const params = useParams();
@@ -63,7 +43,6 @@ export default function SalesOrderDetail() {
         toast.error('Failed to fetch sales order');
       }
     } catch (error) {
-      console.error('Error fetching sales order:', error);
       toast.error('Failed to fetch sales order');
     } finally {
       setLoading(false);    }
@@ -370,7 +349,6 @@ export default function SalesOrderDetail() {
         </DialogContent>
       </Dialog>
 
-      {/* Add Item Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -395,6 +373,7 @@ export default function SalesOrderDetail() {
                 <Input
                   id="add-quantity"
                   type="number"
+                  
                   value={itemForm.quantity}
                   onChange={(e) => setItemForm({...itemForm, quantity: e.target.value})}
                   placeholder="0"

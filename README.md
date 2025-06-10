@@ -1,6 +1,6 @@
-DEPLOYMENT  = [https://sales-order-generator.vercel.app/](https://sales-order-generator.vercel.app/)
-API POSTMAN = []()
+DEPLOYMENT = [https://sales-order-generator.vercel.app/](https://sales-order-generator.vercel.app)
 
+Tantangan yang dihadapi adalah penggunaan Drizzle ORM. Solusi yang digunakan adalah membaca dokumentasi tentang cara setup dan bagaimana cara implementasinya.
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
