@@ -25,7 +25,8 @@ export default function Home() {
   const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => { fetchSalesOrders(); }, []);
-
+  
+  //FILTERING LOGIC
   useEffect(() => {
     let filtered = salesOrders;
 
@@ -41,6 +42,7 @@ export default function Home() {
     setFilteredOrders(filtered);
   }, [salesOrders, searchTerm, statusFilter]);
 
+  //FETCH SALES ORDERS
   const fetchSalesOrders = async () => {
     try {
       const response = await fetch('/api/sales-orders');
@@ -58,6 +60,7 @@ export default function Home() {
     }
   };
 
+  //CHANGE COLOR DEPENDS ON THE STATUS
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Draft': return 'secondary';
@@ -69,6 +72,7 @@ export default function Home() {
     }
   };
 
+  // HANDLE DELETE ORDER
   const handleDeleteOrder = async (id: string, soNumber: string) => {
     try {
       const response = await fetch(`/api/sales-orders/${id}`, {
@@ -88,6 +92,7 @@ export default function Home() {
     }
   };
 
+  //HANDLE STATUS UPDATE
   const handleStatusUpdate = async (id: string, newStatus: string, soNumber: string) => {
     try {
       const response = await fetch(`/api/sales-orders/${id}`, {
@@ -100,7 +105,7 @@ export default function Home() {
 
       if (response.ok) {
         toast.success(`Status updated for ${soNumber}`);
-        fetchSalesOrders(); // Refresh the list
+        fetchSalesOrders(); 
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || 'Failed to update status');
@@ -112,7 +117,7 @@ export default function Home() {
   };
 
   if (loading) {
-    return <div className="container mx-auto p-6">Loading...</div>;
+    return <div className="container mx-auto p-6">LOADING....</div>;
   }
 
   return (
@@ -128,10 +133,7 @@ export default function Home() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by SO number or customer name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            placeholder="Search by SO number or customer name..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10"
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -170,7 +172,7 @@ export default function Home() {
               {filteredOrders.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    {salesOrders.length === 0 ? 'No sales orders found.' : 'No orders match your search criteria.'}
+                    {salesOrders.length === 0 ? 'No sales orders found.' : 'No orders match'}
                   </TableCell>
                 </TableRow>
               ) : (

@@ -4,41 +4,17 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { Download, Edit, Trash2, Plus } from 'lucide-react';
 import jsPDF from 'jspdf';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+// import { SalesOrderItem, SalesOrderDetail } from '@/lib/types/sales-order-items';
 
 interface SalesOrderItem {
   id: string;
@@ -68,11 +44,7 @@ export default function SalesOrderDetail() {
   const [editingItem, setEditingItem] = useState<SalesOrderItem | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [itemForm, setItemForm] = useState({
-    description: '',
-    quantity: '',
-    unitPrice: '',
-  });
+  const [itemForm, setItemForm] = useState({ description: '', quantity: '', unitPrice: '', });
 
   useEffect(() => {
     if (params.id) {
@@ -103,11 +75,11 @@ export default function SalesOrderDetail() {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.width;
     
-    // Header
+    // MAKE A HEADER
     doc.setFontSize(20);
     doc.text('Sales Order', pageWidth / 2, 20, { align: 'center' });
     
-    // Order Information
+    // MAKE ORDER INFORMATION
     doc.setFontSize(12);
     doc.text(`SO Number: ${salesOrder.soNumber}`, 20, 40);
     doc.text(`Customer: ${salesOrder.customerName}`, 20, 50);
@@ -116,25 +88,25 @@ export default function SalesOrderDetail() {
     doc.text(`Delivery Date: ${format(new Date(salesOrder.deliveryDate), 'MMM dd, yyyy')}`, 20, 80);
     doc.text(`Status: ${salesOrder.status}`, 20, 90);
     
-    // Items Table Header
+    //ITEMS
     doc.setFontSize(14);
     doc.text('Items:', 20, 110);
     
-    // Table
+    //TABLE
     doc.setFontSize(10);
     const startY = 120;
     let currentY = startY;
     
-    // Table headers
+    // TABLE/HEADERS
     doc.text('Description', 20, currentY);
     doc.text('Qty', 120, currentY);
     doc.text('Unit Price', 140, currentY);
     doc.text('Total', 170, currentY);
     
     currentY += 10;
-    doc.line(20, currentY - 5, 190, currentY - 5); // Header line
+    doc.line(20, currentY - 5, 190, currentY - 5);
     
-    // Table data
+    //TABLE DATA
     salesOrder.items.forEach((item) => {
       doc.text(item.description, 20, currentY);
       doc.text(item.quantity.toString(), 120, currentY);
@@ -143,17 +115,18 @@ export default function SalesOrderDetail() {
       currentY += 10;
     });
     
-    // Total
+    //TOTAL
     doc.line(20, currentY, 190, currentY);
     currentY += 10;
     doc.setFontSize(12);
     doc.text(`Total Amount: $${parseFloat(salesOrder.totalAmount).toFixed(2)}`, 140, currentY);
     
-    // Save
+    // SAVE
     doc.save(`${salesOrder.soNumber}.pdf`);
     toast.success('PDF exported successfully!');
   };
 
+  //EDIT ITEM
   const handleEditItem = (item: SalesOrderItem) => {
     setEditingItem(item);
     setItemForm({
@@ -164,6 +137,7 @@ export default function SalesOrderDetail() {
     setIsEditDialogOpen(true);
   };
 
+  //ADD ITEM
   const handleAddItem = () => {
     setEditingItem(null);
     setItemForm({
@@ -174,6 +148,7 @@ export default function SalesOrderDetail() {
     setIsAddDialogOpen(true);
   };
 
+  //DELETE ITEM
   const handleDeleteItem = async (itemId: string, description: string) => {
     try {
       const response = await fetch(`/api/sales-orders/${params.id}/items/${itemId}`, {
@@ -182,7 +157,7 @@ export default function SalesOrderDetail() {
 
       if (response.ok) {
         toast.success(`Item "${description}" deleted successfully`);
-        fetchSalesOrder(params.id as string); // Refresh data
+        fetchSalesOrder(params.id as string); 
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || 'Failed to delete item');
@@ -193,6 +168,7 @@ export default function SalesOrderDetail() {
     }
   };
 
+  //SAVE ITEM
   const handleSaveItem = async () => {
     if (!itemForm.description || !itemForm.quantity || !itemForm.unitPrice) {
       toast.error('Please fill in all fields');
@@ -200,9 +176,7 @@ export default function SalesOrderDetail() {
     }
 
     try {
-      const url = editingItem 
-        ? `/api/sales-orders/${params.id}/items/${editingItem.id}`
-        : `/api/sales-orders/${params.id}/items`;
+      const url = editingItem ? `/api/sales-orders/${params.id}/items/${editingItem.id}` : `/api/sales-orders/${params.id}/items`;
       
       const method = editingItem ? 'PUT' : 'POST';
       
@@ -218,7 +192,7 @@ export default function SalesOrderDetail() {
         toast.success(`Item ${editingItem ? 'updated' : 'added'} successfully`);
         setIsEditDialogOpen(false);
         setIsAddDialogOpen(false);
-        fetchSalesOrder(params.id as string); // Refresh data
+        fetchSalesOrder(params.id as string); 
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || `Failed to ${editingItem ? 'update' : 'add'} item`);
@@ -281,7 +255,8 @@ export default function SalesOrderDetail() {
               </Button>
             </div>
           </CardHeader>
-          <CardContent>            <Table>
+          <CardContent>            
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Description</TableHead>
@@ -342,7 +317,6 @@ export default function SalesOrderDetail() {
         </Card>
       </div>
 
-      {/* Edit Item Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
