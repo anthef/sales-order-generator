@@ -7,23 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-
-interface OrderItem {
-  id: string;
-  description: string;
-  quantity: string;
-  unitPrice: string;
-}
+import { OrderItem } from '@/lib/types/order-item/interface'
 
 export default function NewSalesOrder() {
   const router = useRouter();
@@ -38,6 +25,7 @@ export default function NewSalesOrder() {
     { id: '1', description: '', quantity: '', unitPrice: '' }
   ]);
 
+  //DEFAULT ADD ITEM
   const addItem = () => {
     setItems([...items, {
       id: Date.now().toString(),
@@ -47,16 +35,19 @@ export default function NewSalesOrder() {
     }]);
   };
 
+  //DEFAULT REMOVE ITEM
   const removeItem = (id: string) => {
     setItems(items.filter(item => item.id !== id));
   };
 
+  //DEFAULT UPDATE ITEM
   const updateItem = (id: string, field: keyof OrderItem, value: string) => {
     setItems(items.map(item =>
       item.id === id ? { ...item, [field]: value } : item
     ));
   };
 
+  //CALCULATE TOTAL
   const calculateTotal = () => {
     return items.reduce((sum, item) => {
       const quantity = parseFloat(item.quantity) || 0;
@@ -97,7 +88,8 @@ export default function NewSalesOrder() {
     }
     
     setLoading(true);
-
+    
+    //try to fetch...
     try {
       const response = await fetch('/api/sales-orders', {
         method: 'POST',
@@ -276,7 +268,7 @@ export default function NewSalesOrder() {
 
         <div className="flex gap-4">
           <Button type="submit" disabled={loading}>
-            {loading ? 'Creating...' : 'Generate SO'}
+            {loading ? 'CREATING' : 'Generate SO'}
           </Button>
           <Button type="button" variant="outline" onClick={() => router.push('/')}>
             Cancel
